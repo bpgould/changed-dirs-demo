@@ -1,5 +1,0 @@
-before_script:
-  - echo "Hello Blog"
-
-script:
-  - ./scripts/identify_changed_dirs.sh
