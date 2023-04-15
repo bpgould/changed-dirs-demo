@@ -15,16 +15,17 @@ if [[ $CI_ENV == "github" ]]; then
     event_type="$GITHUB_EVENT_NAME"
 	commit_sha="$GITHUB_SHA"
 
+	# only needed in GHA, Travis does this implicitly
 	git fetch origin
 
 	# check that upstream MAIN_BRANCH_NAME is available
-	origin=$(git ls-remote origin | grep "$MAIN_BRANCH_NAME")
+	origin=$(git ls-remote origin | grep "$MAIN_BRANCH_NAME" 2> /dev/null)
 	echo -e "origin: $origin"
 
 fi
 
 if [[ $CI_ENV == "travis" ]]; then
-    event_type="$TRAVIS_event_type"
+    event_type="$TRAVIS_EVENT_TYPE"
 	commit_sha="$TRAVIS_COMMIT"
 fi
 
