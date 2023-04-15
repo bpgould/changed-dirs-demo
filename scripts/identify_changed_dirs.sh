@@ -1,18 +1,42 @@
 #!/bin/bash
 
-# this script will run in Travis CICD, identify changed files
-# and save the directories of the files if a condition is met,
+# this script will run in GitHub Actions or Travis CICD,
+# identify changed files
+# and save the directories of the files
+# if a condition is met,
 # it will then print the array of directories
 
-top_level_directory='src'
-main_branch_name='main'
+# allowed: github or travis
+CI_ENV="github"
+TOP_LEVEL_DIRECTORY='src'
+MAIN_BRANCH_NAME='main'
 
-if [[ "$TRAVIS_EVENT_TYPE" == "push" ]]; then
+if [[ $CI_ENV == "github" ]]; then
+	event_type="$GITHUB_EVENT_NAME"
+	commit_sha="$GITHUB_SHA"
+
+	# only needed in GHA, Travis does this implicitly
+	git fetch origin >/dev/null 2>&1
+
+	# check that upstream MAIN_BRANCH_NAME is available
+	origin=$(git ls-remote origin | grep "$MAIN_BRANCH_NAME" 2>/dev/null)
+	echo -e "origin: $origin"
+
+fi
+
+if [[ $CI_ENV == "travis" ]]; then
+	event_type="$TRAVIS_EVENT_TYPE"
+	commit_sha="$TRAVIS_COMMIT"
+fi
+
+if [[ "$event_type" == "push" ]]; then
 	# collect only changed files from commit
-	mapfile -t files< <(git diff-tree --no-commit-id --name-only -r "$TRAVIS_COMMIT")
-elif [[ "$TRAVIS_EVENT_TYPE" == "pull_request" ]]; then
+	mapfile -t files < <(git diff-tree --no-commit-id --name-only -r "$commit_sha")
+fi
+
+if [[ "$event_type" == "pull_request" ]]; then
 	# collect all changed files from commit range
-	mapfile -t files< <(git diff-tree --no-commit-id --name-only -r origin/"$main_branch_name" -r "$TRAVIS_COMMIT")
+	mapfile -t files < <(git diff-tree --no-commit-id --name-only -r origin/"$MAIN_BRANCH_NAME" -r "$commit_sha")
 fi
 
 # create directories list
@@ -24,16 +48,18 @@ for file in "${files[@]}"; do
 	# I only want to collect files in subdirectories under a top level directory
 	# provided at the top of the script, therefore the condition requires that the
 	# path has a directory matching the user provided value
-	if [[ $parent_dir != "." ]] && [[ $parent_dir == *"$top_level_directory"* ]]; then
+	if [[ $parent_dir != "." ]] && [[ $parent_dir == *"$TOP_LEVEL_DIRECTORY"* ]]; then
 		directories+=("$parent_dir")
 	fi
 done
+
+echo "changed directories:"
 
 if [[ ${#directories[@]} -eq 0 ]]; then
 	echo "no matches"
 else
 	printf "'%s'\n" "${directories[@]}"
-    # often we want to write to a file so that another script can act on the list
+	# often we want to write to a file so that another script can act on the list
 	# write directories to file since arrays cannot be exported
-	printf "'%s'\n" "${directories[@]}" > changed_tf_dirs.txt
+	printf "'%s'\n" "${directories[@]}" >changed_tf_dirs.txt
 fi
