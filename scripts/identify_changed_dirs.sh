@@ -16,7 +16,7 @@ if [[ $CI_ENV == "github" ]]; then
 	commit_sha="$GITHUB_SHA"
 
 	# only needed in GHA, Travis does this implicitly
-	git fetch origin
+	git fetch origin > /dev/null 2>&1
 
 	# check that upstream MAIN_BRANCH_NAME is available
 	origin=$(git ls-remote origin | grep "$MAIN_BRANCH_NAME" 2> /dev/null)
