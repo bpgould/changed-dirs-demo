@@ -9,6 +9,10 @@ jobs:
     steps:
     - uses: actions/checkout@v2
 
+    - name: Check CI Env deps
+      run: |
+        echo $(bash --version)
+
     - name: Run Script
       run: |
         bash scripts/identify_changed_dirs.sh
