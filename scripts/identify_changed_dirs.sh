@@ -12,20 +12,20 @@ TOP_LEVEL_DIRECTORY='src'
 MAIN_BRANCH_NAME='main'
 
 if [[ $CI_ENV == "github" ]]; then
-    event_type="$GITHUB_EVENT_NAME"
+	event_type="$GITHUB_EVENT_NAME"
 	commit_sha="$GITHUB_SHA"
 
 	# only needed in GHA, Travis does this implicitly
-	git fetch origin > /dev/null 2>&1
+	git fetch origin >/dev/null 2>&1
 
 	# check that upstream MAIN_BRANCH_NAME is available
-	origin=$(git ls-remote origin | grep "$MAIN_BRANCH_NAME" 2> /dev/null)
+	origin=$(git ls-remote origin | grep "$MAIN_BRANCH_NAME" 2>/dev/null)
 	echo -e "origin: $origin"
 
 fi
 
 if [[ $CI_ENV == "travis" ]]; then
-    event_type="$TRAVIS_EVENT_TYPE"
+	event_type="$TRAVIS_EVENT_TYPE"
 	commit_sha="$TRAVIS_COMMIT"
 fi
 
@@ -52,6 +52,8 @@ for file in "${files[@]}"; do
 		directories+=("$parent_dir")
 	fi
 done
+
+echo "changed directories:"
 
 if [[ ${#directories[@]} -eq 0 ]]; then
 	echo "no matches"
