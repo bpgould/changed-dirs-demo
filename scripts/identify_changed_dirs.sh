@@ -14,6 +14,13 @@ MAIN_BRANCH_NAME='main'
 if [[ $CI_ENV == "github" ]]; then
     event_type="$GITHUB_EVENT_NAME"
 	commit_sha="$GITHUB_SHA"
+
+	git fetch origin
+
+	# check that upstream MAIN_BRANCH_NAME is available
+	origin=$(git ls-remote origin | grep "$MAIN_BRANCH_NAME")
+	echo -e "origin: $origin"
+
 fi
 
 if [[ $CI_ENV == "travis" ]]; then

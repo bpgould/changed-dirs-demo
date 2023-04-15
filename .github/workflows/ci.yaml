@@ -13,6 +13,6 @@ jobs:
       run: |
         echo $(bash --version)
 
-    - name: Run Script
+    - name: Identify Changed Dirs
       run: |
         bash scripts/identify_changed_dirs.sh
