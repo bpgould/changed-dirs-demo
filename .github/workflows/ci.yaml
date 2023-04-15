@@ -9,10 +9,6 @@ jobs:
     steps:
     - uses: actions/checkout@v2
 
-    - name: Install dependencies
+    - name: Run Script
       run: |
-        npm install
-
-    - name: Run tests
-      run: |
-        npm test
+        bash scripts/identify_changed_dirs.sh
