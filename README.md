@@ -6,7 +6,7 @@ On a Pull Request, it will compare files in the set directory with the current H
 
 On a Push, it will identify changed files in the set directory from the current commit.
 
-This is useful for mono-repo type operations or when you want your CI to respond to changed files only in a specify directory, matching specific crieria.
+This is useful for mono-repo type operations or when you want your CI to respond to changed files only in a specific directory, matching specific crieria.
 
 One example is for Terraform. If you have multiple Terraform environments in a single repo with their own states, you would want to loop over them and perform your Terraform CI proccess.
 

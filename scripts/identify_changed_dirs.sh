@@ -21,7 +21,6 @@ if [[ $CI_ENV == "github" ]]; then
 	# check that upstream MAIN_BRANCH_NAME is available
 	origin=$(git ls-remote origin | grep "$MAIN_BRANCH_NAME" 2>/dev/null)
 	echo -e "origin: $origin"
-
 fi
 
 if [[ $CI_ENV == "travis" ]]; then
